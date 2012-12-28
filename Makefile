@@ -1,5 +1,5 @@
 ARDUINO := /usr/share/arduino
 BOARD := uno
-SOURCES := main.ino
+SOURCES := arduino_puyopuyo.ino
 LIBRARIES := Tlc5940
 include ./arduino.mk
