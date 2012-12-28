@@ -1,4 +1,4 @@
-# arduino-puyopuyo
+# arduino_puyopuyo
 ArduinoとRGBLEDを使ったぷよぷよ
 
 ## Requires
