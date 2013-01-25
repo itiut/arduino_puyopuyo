@@ -5,13 +5,14 @@
 
 class LED {
 private:
-    const static int kWidth      = 6;
-    const static int kHeight     = 12;
-    const static int kRedValue   = 1000;
-    const static int kGreenValue = 1000;
-    const static int kBlueValue  = 1000;
+    const static int kRedValue   = 100;
+    const static int kGreenValue = 100;
+    const static int kBlueValue  = 100;
 
 public:
+    const static int kWidth      = 6;
+    const static int kHeight     = 12;
+
     enum COLOR {
         CLEAR   = 0x0,
         BLUE    = 0x1,
@@ -28,7 +29,7 @@ public:
 
     void ClearAll();
     void Update();
-    void SetColor(int channel, COLOR c);
+    void SetColor(int index, COLOR c);
     void SetColor(int x, int y, COLOR c);
 };
 
