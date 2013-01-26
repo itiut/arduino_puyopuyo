@@ -17,26 +17,26 @@ void loop() {
   /* delay(1000); */
 
   /* for (int i = 0; i < 76; i++) { */
-  /*   led.SetColor(i, LED::AQUA); */
+  /*   led.SetColor(i, AQUA); */
   /* } */
   /* led.Update(); */
   /* delay(1000); */
 
   /* for (int i = 0; i < 76; i++) { */
-  /*   led.SetColor(i, LED::MAGENTA); */
+  /*   led.SetColor(i, MAGENTA); */
   /* } */
   /* led.Update(); */
   /* delay(1000); */
 
   /* for (int i = 0; i < 76; i++) { */
-  /*   led.SetColor(i, LED::YELLOW); */
+  /*   led.SetColor(i, YELLOW); */
   /* } */
   /* led.Update(); */
   /* delay(1000); */
 
   for (int y = 0; y < LED::kHeight; y++) {
     for (int x = 0; x < LED::kWidth; x++) {
-      led.SetColor(x, y, LED::RED);
+      led.SetColor(x, y, RED);
     }
   }
   led.Update();
@@ -44,7 +44,7 @@ void loop() {
 
   for (int y = 0; y < LED::kHeight; y++) {
     for (int x = 0; x < LED::kWidth; x++) {
-      led.SetColor(x, y, LED::GREEN);
+      led.SetColor(x, y, GREEN);
     }
   }
   led.Update();
@@ -52,7 +52,7 @@ void loop() {
 
   for (int y = 0; y < LED::kHeight; y++) {
     for (int x = 0; x < LED::kWidth; x++) {
-      led.SetColor(x, y, LED::BLUE);
+      led.SetColor(x, y, BLUE);
     }
   }
   led.Update();

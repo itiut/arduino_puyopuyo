@@ -3,9 +3,19 @@
 
 #include <Tlc5940.h>
 
+enum COLOR {
+    CLEAR   = 0x0,
+    BLUE    = 0x1,
+    GREEN   = 0x2,
+    AQUA    = 0x3,
+    RED     = 0x4,
+    MAGENTA = 0x5,
+    YELLOW  = 0x6,
+    WHITE   = 0x7,
+};
+
 class LED {
 private:
-    const static int kLEDNum = 76;
     const static int kRedValue   = 100;
     const static int kGreenValue = 100;
     const static int kBlueValue  = 100;
@@ -13,19 +23,9 @@ private:
     void SetColorNC(int index, COLOR c);
 
 public:
-    const static int kWidth      = 6;
-    const static int kHeight     = 12;
-
-    enum COLOR {
-        CLEAR   = 0x0,
-        BLUE    = 0x1,
-        GREEN   = 0x2,
-        AQUA    = 0x3,
-        RED     = 0x4,
-        MAGENTA = 0x5,
-        YELLOW  = 0x6,
-        WHITE   = 0x7,
-    };
+    const static int kLEDNum = 76;
+    const static int kWidth  = 6;
+    const static int kHeight = 12;
 
     LED();
     virtual ~LED();
