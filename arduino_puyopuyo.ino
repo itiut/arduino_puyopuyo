@@ -4,10 +4,9 @@
 /* SNESpad nintendo = SNESpad(6, 5, 7); */
 /* byte state = 0; */
 
-LED led;
 
 void setup() {
-  led = LED();
+  LED::Init();
   /* Serial.begin(9600); */
 }
 
@@ -17,44 +16,44 @@ void loop() {
   /* delay(1000); */
 
   /* for (int i = 0; i < 76; i++) { */
-  /*   led.SetColor(i, AQUA); */
+  /*   LED::SetColor(i, AQUA); */
   /* } */
-  /* led.Update(); */
+  /* LED::Update(); */
   /* delay(1000); */
 
   /* for (int i = 0; i < 76; i++) { */
-  /*   led.SetColor(i, MAGENTA); */
+  /*   LED::SetColor(i, MAGENTA); */
   /* } */
-  /* led.Update(); */
+  /* LED::Update(); */
   /* delay(1000); */
 
   /* for (int i = 0; i < 76; i++) { */
-  /*   led.SetColor(i, YELLOW); */
+  /*   LED::SetColor(i, YELLOW); */
   /* } */
-  /* led.Update(); */
+  /* LED::Update(); */
   /* delay(1000); */
 
   for (int y = 0; y < LED::kHeight; y++) {
     for (int x = 0; x < LED::kWidth; x++) {
-      led.SetColor(x, y, RED);
+      LED::SetColor(x, y, RED);
     }
   }
-  led.Update();
+  LED::Update();
   delay(1000);
 
   for (int y = 0; y < LED::kHeight; y++) {
     for (int x = 0; x < LED::kWidth; x++) {
-      led.SetColor(x, y, GREEN);
+      LED::SetColor(x, y, GREEN);
     }
   }
-  led.Update();
+  LED::Update();
   delay(1000);
 
   for (int y = 0; y < LED::kHeight; y++) {
     for (int x = 0; x < LED::kWidth; x++) {
-      led.SetColor(x, y, BLUE);
+      LED::SetColor(x, y, BLUE);
     }
   }
-  led.Update();
+  LED::Update();
   delay(1000);
 }

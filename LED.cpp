@@ -1,11 +1,8 @@
 #include <Tlc5940.h>
 #include "LED.h"
 
-LED::LED() {
+void LED::Init() {
     Tlc.init();
-}
-
-LED::~LED() {
 }
 
 void LED::ClearAll() {
@@ -27,12 +24,12 @@ void LED::SetColor(int index, COLOR c) {
     if (index < 0 || LED::kLEDNum <= index) {
         return;
     }
-    LED::SetColorNC(index, c);
+    SetColorNC(index, c);
 }
 
 void LED::SetColor(int x, int y, COLOR c) {
     if (x < 0 || LED::kWidth <= x || y < 0 || LED::kHeight <= y) {
         return;
     }
-    LED::SetColorNC(y * LED::kWidth + x, c);
+    SetColorNC(y * LED::kWidth + x, c);
 }
