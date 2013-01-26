@@ -8,7 +8,6 @@ LED::LED() {
 LED::~LED() {
 }
 
-
 void LED::ClearAll() {
     Tlc.clear();
 }
@@ -17,15 +16,23 @@ void LED::Update() {
     Tlc.update();
 }
 
+void LED::SetColorNC(int index, COLOR c) {
+    int channel = index * 3;
+    Tlc.set(channel, (c & LED::RED) ? LED::kRedValue : 0);
+    Tlc.set(channel + 1, (c & LED::GREEN) ? LED::kGreenValue : 0);
+    Tlc.set(channel + 2, (c & LED::BLUE) ? LED::kBlueValue : 0);
+}
+
 void LED::SetColor(int index, LED::COLOR c) {
-    index *= 3;
-    Tlc.set(index, (c & LED::RED) ? LED::kRedValue : 0);
-    Tlc.set(index + 1, (c & LED::GREEN) ? LED::kGreenValue : 0);
-    Tlc.set(index + 2, (c & LED::BLUE) ? LED::kBlueValue : 0);
+    if (index < 0 || LED::kLEDNum <= index) {
+        return;
+    }
+    LED::SetColorNC(index, c);
 }
 
 void LED::SetColor(int x, int y, COLOR c) {
-    if (0 <= x && x < LED::kWidth && 0 <= y && y < LED::kHeight) {
-        LED::SetColor(y * LED::kWidth + x, c);
+    if (x < 0 || LED::kWidth <= x || y < 0 || LED::kHeight <= h) {
+        return;
     }
+    LED::SetColorNC(y * LED::kWidth + x, c);
 }

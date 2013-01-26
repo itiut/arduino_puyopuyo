@@ -5,9 +5,12 @@
 
 class LED {
 private:
+    const static int kLEDNum = 76;
     const static int kRedValue   = 100;
     const static int kGreenValue = 100;
     const static int kBlueValue  = 100;
+
+    void SetColorNC(int index, COLOR c);
 
 public:
     const static int kWidth      = 6;
