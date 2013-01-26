@@ -24,12 +24,12 @@ void LED::SetColor(int index, COLOR c) {
     if (index < 0 || LED::kLEDNum <= index) {
         return;
     }
-    SetColorNC(index, c);
+    LED::SetColorNC(index, c);
 }
 
 void LED::SetColor(int x, int y, COLOR c) {
     if (x < 0 || LED::kWidth <= x || y < 0 || LED::kHeight <= y) {
         return;
     }
-    SetColorNC(y * LED::kWidth + x, c);
+    LED::SetColorNC(y * LED::kWidth + x, c);
 }
