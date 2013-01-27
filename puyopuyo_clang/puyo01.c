@@ -113,6 +113,9 @@ int main(void)
             wait = 0;
         } 
     }
+    printf("gameover!!!!\n");
+    exit(0);
+
     return 0;
 }
 
@@ -138,29 +141,29 @@ void ShowField(FIELD* pField)
 
             switch(pField->stBlock[nX][nY].nColor){
                 case 0:
-                    printf("  ");
-                    break;
+                printf("  ");
+                break;
                 case 1:
-                    printf("● ");
-                    break;
+                printf("● ");
+                break;
                 case 2:
-                    printf("▲ ");
-                    break;
+                printf("▲ ");
+                break;
                 case 3:
-                    printf("@ ");
-                    break;
+                printf("@ ");
+                break;
                 case 4:
-                    printf("# ");
-                    break;
+                printf("# ");
+                break;
                 case 5:
-                    printf("$ ");
-                    break;
+                printf("$ ");
+                break;
                 case 9:
-                    printf("■ ");
-                    break;
+                printf("■ ");
+                break;
                 default:
-                    printf("%d ",pField->stBlock[nX][nY].nColor);
-                    break;
+                printf("%d ",pField->stBlock[nX][nY].nColor);
+                break;
             }
             //printf("(%d,%d)",nX,nY );
         }
@@ -370,8 +373,6 @@ int CreatePuyo(FIELD* pField)
             //置いたぷよが既に存在するぷよに重なっていればゲームオーバー
             if (pField->stBlock[nX+x][nY+y].nColor != puyo[nX][nY]){
                 gameover = 1;
-                printf("gameover!!!!\n");
-                exit(0);
                 return 1;
             }
         }
@@ -479,28 +480,28 @@ int TurnPuyo(FIELD* pField, FIELD* pStage, int direction){
         switch(place) {
 
             case 1:
-                puyo[1][0] = puyo[0][1];
-                puyo[0][1] = 0;
-                break;
+            puyo[1][0] = puyo[0][1];
+            puyo[0][1] = 0;
+            break;
             
             case 2:
-                puyo[2][1] = puyo[1][0];
-                puyo[1][0] = 0;
-                break;
+            puyo[2][1] = puyo[1][0];
+            puyo[1][0] = 0;
+            break;
 
             case 3:
-                puyo[0][1] = puyo[1][2];
-                puyo[1][2] = 0;
-                break;
+            puyo[0][1] = puyo[1][2];
+            puyo[1][2] = 0;
+            break;
 
             case 4:
-                puyo[1][2] = puyo[2][1];
-                puyo[2][1] = 0;
-                break;
+            puyo[1][2] = puyo[2][1];
+            puyo[2][1] = 0;
+            break;
 
             default:
-                printf("回転エラー\n");
-                break;
+            printf("回転エラー\n");
+            break;
         }
     }
     //左回転
@@ -508,34 +509,34 @@ int TurnPuyo(FIELD* pField, FIELD* pStage, int direction){
         switch(place) {
 
             case 1:
-                puyo[1][2] = puyo[0][1];
-                puyo[0][1] = 0;
-                break;
+            puyo[1][2] = puyo[0][1];
+            puyo[0][1] = 0;
+            break;
             
             case 2:
-                puyo[0][1] = puyo[1][0];
-                puyo[1][0] = 0;
-                break;
+            puyo[0][1] = puyo[1][0];
+            puyo[1][0] = 0;
+            break;
 
             case 3:
-                puyo[2][1] = puyo[1][2];
-                puyo[1][2] = 0;
-                break;
+            puyo[2][1] = puyo[1][2];
+            puyo[1][2] = 0;
+            break;
 
             case 4:
-                puyo[1][0] = puyo[2][1];
-                puyo[2][1] = 0;
-                break;
+            puyo[1][0] = puyo[2][1];
+            puyo[2][1] = 0;
+            break;
 
             default:
-                printf("回転エラー\n");
-                break;
-            }
+            printf("回転エラー\n");
+            break;
+        }
     }
     
     //回転した結果，ステージとかぶってしまっている場合
     if(CheckOverlap(pStage, x, y)) {
-        
+
         //左端の場合,右に１マスずらしても大丈夫だったらずらす
         if ( (x == 0)  && (!CheckOverlap(pStage, x+1, y)) ){
             x++;
@@ -577,14 +578,14 @@ void DeletePuyo(FIELD *pField, FIELD *pStage){
 }
 
 void FallPuyo(FIELD *pField, FIELD *pStage){
-    
+
     int i;
 
     // 空白を詰める為に１段ずつ落下させる
     while (Slide(pStage) != 0){
-        
-        for (i = 0; i < DELAY; i++);
-        ShowField(pStage);
+
+        for (i = 0; i < DELAY; i++){;}
+            ShowField(pStage);
     }
 
     memcpy(pField, pStage, sizeof(FIELD));
