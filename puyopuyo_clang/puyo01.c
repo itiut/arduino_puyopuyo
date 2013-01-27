@@ -174,7 +174,7 @@ void ShowField(FIELD* pField)
     printf("\n");
 }
 
-// 全ブロックの同色で隣接している個数をチェックする
+// 全ぷよの同色で隣接している個数をチェックする
 int Check(FIELD* pField)
 {
     int nX = 0;

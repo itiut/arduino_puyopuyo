@@ -7,7 +7,7 @@ enum COLOR {
     CLEAR   = 0x0,
     BLUE    = 0x1,
     GREEN   = 0x2,
-    AQUA    = 0x3,
+    CYAN    = 0x3,
     RED     = 0x4,
     MAGENTA = 0x5,
     YELLOW  = 0x6,
