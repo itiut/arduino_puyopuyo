@@ -33,3 +33,9 @@ void LED::SetColor(int x, int y, COLOR c) {
     }
     LED::SetColorNC(y * LED::kWidth + x, c);
 }
+
+void LED::SetAllColor(COLOR c) {
+    for (int i = 0; i < LED::kLEDNum; i++) {
+        LED::SetColorNC(i, c);
+    }
+}

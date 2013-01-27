@@ -34,6 +34,7 @@ public:
     static void Update();
     static void SetColor(int index, COLOR c);
     static void SetColor(int x, int y, COLOR c);
+    static void SetAllColor(COLOR c);
 };
 
 #endif /* _LED_H_ */
