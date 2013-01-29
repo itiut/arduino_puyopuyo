@@ -18,7 +18,9 @@ private:
     static const int kDys[4];
     static const int kDds[4];
     static const int kDeletePuyoNum = 4; /* 消去に必要な個数 */
-    static const int kFallDelayMillis = 100;
+    static const int kFallClockMillis = 100;
+    static const int kBlinkNum = 3;
+    static const int kBlinkClockMillis = 100;
 
     int field_fixed_[kFieldHeight][kFieldWidth]; /* 固定 */
     int field_float_[kFieldHeight][kFieldWidth]; /* 固定+浮遊 (表示用) */
@@ -43,6 +45,7 @@ private:
     unsigned long clock_cycle_millis_;
     unsigned long next_clock_millis_;
     unsigned long input_clock_cycle_millis_;
+    unsigned long down_input_clock_cycle_millis_;
     unsigned long next_input_clock_millis_;
 
     void CreatePuyo(int *puyos);
@@ -56,7 +59,7 @@ private:
     bool SearchAndDeletePuyo();
     bool DeletePuyo(int cx, int cy);
     void RecCheckNeighboring(int x, int y, int value, int d);
-
+    void Blink();
     void Show();
     void Init();
 

@@ -18,6 +18,7 @@ Game::Game(SNESpad *p_nintendo, LED *p_led) {
 
     clock_cycle_millis_ = 1000;
     input_clock_cycle_millis_ = 250;
+    down_input_clock_cycle_millis_ = 100;
 }
 
 Game::~Game() {
@@ -140,7 +141,7 @@ void Game::ControlPuyo(int input) {
 
 void Game::FallPuyo() {
     while (DownOneRow()) {
-        delay(kFallDelayMillis);
+        delay(kFallClockMillis);
         Show();
     }
     memcpy(field_fixed_, field_float_, sizeof(field_fixed_));
@@ -221,6 +222,21 @@ void Game::RecCheckNeighboring(int x, int y, int value, int d) {
     }
 }
 
+void Game::Blink() {
+    for (int i = 0; i < kBlinkNum; i++) {
+        Show();
+        delay(kBlinkClockMillis);
+
+        for (int y = 0; y < kHeight; y++) {
+            for (int x = 0; x < kWidth; x++) {
+                p_led_->SetColor(x, y, kPuyoColors[field_fixed_[y + 1][x + 1]]);
+            }
+        }
+        p_led_->Update();
+        delay(kBlinkClockMillis);
+    }
+}
+
 void Game::Show() {
     for (int y = 0; y < kHeight; y++) {
         for (int x = 0; x < kWidth; x++) {
@@ -272,8 +288,8 @@ void Game::Start() {
             unsigned long input_time_millis = millis();
             if (input_time_millis > next_input_clock_millis_) {
                 ControlPuyo(input);
-                // TODO: Down押しっぱなし時のクロックを短めに
-                next_input_clock_millis_ = millis() + input_clock_cycle_millis_;
+                next_input_clock_millis_ = millis();
+                next_input_clock_millis_ += (input & SNES_DOWN) ? down_input_clock_cycle_millis_ : input_clock_cycle_millis_;
             }
         } else {
             // 押しっぱなし解除時にはすぐに入力を受け付ける
@@ -294,7 +310,7 @@ void Game::Start() {
                 FallPuyo();
                 // 連鎖と移動
                 while (SearchAndDeletePuyo()) {
-                    Show();
+                    Blink();
                     FallPuyo();
                 }
                 // 新しいぷよを配置
