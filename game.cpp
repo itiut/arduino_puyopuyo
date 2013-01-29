@@ -8,6 +8,10 @@ const COLOR Game::kPuyoColors[kColorNum] = {
     CLEAR, RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW, WHITE,
 };
 
+const int Game::kDxs[4] = {0, 1, 0, -1};
+const int Game::kDys[4] = {-1, 0, 1, 0};
+const int Game::kDds[4] = {2, 3, 0, 1};
+
 Game::Game(SNESpad *p_nintendo, LED *p_led) {
     p_nintendo_ = p_nintendo;
     p_led_ = p_led;
@@ -134,58 +138,87 @@ void Game::ControlPuyo(int input) {
     }
 }
 
-void Game::LockPuyo() {
-    memcpy(field_fixed_, field_float_, sizeof(field_fixed_));
-}
-
 void Game::FallPuyo() {
-    while (SlideOneRaw()) {
+    while (DownOneRow()) {
         delay(kFallDelayMillis);
         Show();
     }
     memcpy(field_fixed_, field_float_, sizeof(field_fixed_));
 }
 
-bool Game::SlideOneRaw() {
-    bool slide = false;
+bool Game::DownOneRow() {
+    bool result = false;
     for (int y = kFieldHeight - 2; y > 0; y--) {
         for (int x = 1; x < kFieldWidth - 1; x++) {
             if (field_float_[y][x] == 0 && field_float_[y - 1][x] != 0) {
                 field_float_[y][x] = field_float_[y - 1][x];
                 field_float_[y - 1][x] = 0;
-                // 必要?
-                field_float_vanish_[y][x] = field_float_vanish_[y - 1][x];
-                field_float_vanish_[y - 1][x] = 0;
-                slide = true;
+                result = true;
             }
         }
     }
-    return slide;
+    return result;
 }
 
-void Game::Init() {
-    is_over_ = false;
-
-    memset(field_fixed_, 0, sizeof(field_fixed_));
-    memset(field_float_, 0, sizeof(field_float_));
-    memset(field_fixed_vanish_, 0, sizeof(field_fixed_vanish_));
-    memset(field_float_vanish_, 0, sizeof(field_float_vanish_));
-
-    // TODO: マジックナンバー9をどうにかする
-    for (int y = 0; y < kFieldHeight; y++) {
-        field_fixed_[y][0] = field_fixed_[y][kFieldWidth - 1] = 9;
-        field_float_[y][0] = field_float_[y][kFieldWidth - 1] = 9;
+bool Game::SearchAndDeletePuyo() {
+    bool result = false;
+    for (int y = 0; y < kFieldHeight - 1; y++) {
+        for (int x = 1; x < kFieldWidth - 1; x++) {
+            if (field_float_[y][x] == 0) {
+                continue;
+            }
+            if ((x + 1 < kFieldWidth - 1 && field_float_[y][x] == field_float_[y][x + 1])
+                || (y + 1 < kFieldHeight - 1 && field_float_[y][x] == field_float_[y + 1][x])) {
+                result |= DeletePuyo(x, y);
+            }
+        }
     }
-    for (int x = 0; x < kFieldWidth; x++) {
-        field_fixed_[kFieldHeight - 1][x] = field_float_[kFieldHeight - 1][x] = 9;
+    return result;
+}
+
+bool Game::DeletePuyo(int cx, int cy) {
+    memset(field_check_, 0, sizeof(field_check_));
+    RecCheckNeighboring(cx, cy, field_float_[cy][cx], -1);
+
+    int counter = 0;
+    for (int y = 0; y < kFieldHeight - 1; y++) {
+        for (int x = 1; x < kFieldWidth - 1; x++) {
+            if (field_check_[y][x] == 1) {
+                counter++;
+            }
+        }
+    }
+    if (counter < kDeletePuyoNum) {
+        return false;
     }
 
-    CreatePuyo(next_puyos);
-    CreatePuyo(next2_puyos);
-    SetPuyo();
+    for (int y = 0; y < kFieldHeight - 1; y++) {
+        for (int x = 1; x < kFieldWidth - 1; x++) {
+            if (field_check_[y][x] == 1) {
+                field_float_[y][x] = 0;
+            }
+        }
+    }
+    return true;
+}
 
-    next_clock_millis_ = millis() + clock_cycle_millis_;
-    next_input_clock_millis_ = 0;
+void Game::RecCheckNeighboring(int x, int y, int value, int d) {
+    if (x < 1 || kFieldWidth - 1 <= x || y < 0 || kFieldHeight - 1 <= y || field_check_[y][x] > 0) {
+        return;
+    }
+    if (field_float_[y][x] != value) {
+        // 検索している色と違う色だったら、訪問済みに
+        field_check_[y][x] = 3;
+        return;
+    }
+
+    // 同じ色だったら、削除に
+    field_check_[y][x] = 1;
+    for (int i = 0; i < 4; i++) {
+        if (i != d) {
+            RecCheckNeighboring(x + kDxs[i], y + kDys[i], value, kDds[i]);
+        }
+    }
 }
 
 void Game::Show() {
@@ -202,6 +235,29 @@ void Game::Show() {
     p_led_->SetColor(75, kPuyoColors[next2_puyos[1]]);
 
     p_led_->Update();
+}
+
+void Game::Init() {
+    is_over_ = false;
+
+    memset(field_fixed_, 0, sizeof(field_fixed_));
+    memset(field_float_, 0, sizeof(field_float_));
+
+    // TODO: マジックナンバー9をどうにかする
+    for (int y = 0; y < kFieldHeight; y++) {
+        field_fixed_[y][0] = field_fixed_[y][kFieldWidth - 1] = 9;
+        field_float_[y][0] = field_float_[y][kFieldWidth - 1] = 9;
+    }
+    for (int x = 0; x < kFieldWidth; x++) {
+        field_fixed_[kFieldHeight - 1][x] = field_float_[kFieldHeight - 1][x] = 9;
+    }
+
+    CreatePuyo(next_puyos);
+    CreatePuyo(next2_puyos);
+    SetPuyo();
+
+    next_clock_millis_ = millis() + clock_cycle_millis_;
+    next_input_clock_millis_ = 0;
 }
 
 void Game::Start() {
@@ -233,11 +289,14 @@ void Game::Start() {
                 MovePuyo(0, 1);
             } else {
                 // 固定
-                LockPuyo();
+                memcpy(field_fixed_, field_float_, sizeof(field_fixed_));
                 // 浮いてるぷよを落とす
                 FallPuyo();
                 // 連鎖と移動
-
+                while (SearchAndDeletePuyo()) {
+                    Show();
+                    FallPuyo();
+                }
                 // 新しいぷよを配置
                 SetPuyo();
             }
