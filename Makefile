@@ -1,6 +1,6 @@
 ARDUINO := /usr/share/arduino
 BOARD := uno
-SOURCES := arduino_puyopuyo.ino LED.cpp
+SOURCES := arduino_puyopuyo.ino LED.cpp game.cpp
 LIBRARIES := Tlc5940 SNESpad
 include ./arduino.mk
 
