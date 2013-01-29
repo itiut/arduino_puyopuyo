@@ -4,6 +4,10 @@
 #include "LED.h"
 #include "game.h"
 
+const COLOR Game::kPuyoColors[kColorNum] = {
+    CLEAR, RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW, WHITE,
+};
+
 Game::Game(SNESpad *p_nintendo, LED *p_led) {
     p_nintendo_ = p_nintendo;
     p_led_ = p_led;
@@ -94,31 +98,19 @@ void Game::Init() {
     next_clock_millis_ = millis() + clock_cycle_millis_;
 }
 
-COLOR Game::PuyoColor(unsigned char value) {
-    switch (value) {
-    case 1:  return RED;
-    case 2:  return GREEN;
-    case 3:  return BLUE;
-    case 4:  return CYAN;
-    case 5:  return MAGENTA;
-    case 6:  return YELLOW;
-    case 7:  return WHITE;
-    default: return CLEAR;
-    }
-}
 
 void Game::Show() {
     for (unsigned char y = 0; y < kHeight; y++) {
         for (unsigned char x = 0; x < kWidth; x++) {
-            p_led_->SetColor(x, y, PuyoColor(field_float_[y][x+1]));
+            p_led_->SetColor(x, y, kPuyoColors[field_float_[y][x+1]]);
         }
     }
 
     // TODO: マジックナンバーなんとかする
-    p_led_->SetColor(72, PuyoColor(puyo_next_.field_[0][1]));
-    p_led_->SetColor(73, PuyoColor(puyo_next_.field_[1][1]));
-    p_led_->SetColor(74, PuyoColor(puyo_next2_.field_[0][1]));
-    p_led_->SetColor(75, PuyoColor(puyo_next2_.field_[1][1]));
+    p_led_->SetColor(72, kPuyoColors[puyo_next_.field_[0][1]]);
+    p_led_->SetColor(73, kPuyoColors[puyo_next_.field_[1][1]]);
+    p_led_->SetColor(74, kPuyoColors[puyo_next2_.field_[0][1]]);
+    p_led_->SetColor(75, kPuyoColors[puyo_next2_.field_[1][1]]);
 
     p_led_->Update();
 }
@@ -128,8 +120,9 @@ void Game::Start() {
 
     while (!is_over_) {
         // 入力
-        if (0) {
+        if (int input = p_nintendo_->buttons()) {
             // 移動
+
         }
 
         // 一定時間たったとき

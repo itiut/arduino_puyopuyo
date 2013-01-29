@@ -9,11 +9,12 @@ private:
     static const unsigned char kWidth = 6;
     static const unsigned char kHeight = 12;
     static const unsigned char kVanish = 4; /* 消去に必要な個数 */
-    static const unsigned char kColorNum = 5; /* 色数 */
+    static const unsigned char kColorNum = 8; /* 色数 */
     static const unsigned char kFieldWidth = kWidth + 2;
     static const unsigned char kFieldHeight = kHeight + 1;
     static const unsigned char kPuyoWidth = 3;
     static const unsigned char kPuyoHeight = 3;
+    static const COLOR kPuyoColors[kColorNum];
 
     unsigned char field_fixed_[kFieldHeight][kFieldWidth]; /* 固定 */
     unsigned char field_float_[kFieldHeight][kFieldWidth]; /* 固定+浮遊 */
@@ -42,7 +43,6 @@ private:
     bool CheckOverlap(Puyo *p_puyo, unsigned char dx, unsigned char dy);
     void MovePuyo(Puyo *p_puyo, unsigned char dx, unsigned char dy);
     void Init();
-    COLOR PuyoColor(unsigned char value);
     void Show();
 
 public:
