@@ -44,6 +44,8 @@ private:
     LED *p_led_;
 
     bool is_over_;
+    int jammer_puyo_counter_;
+    int jammer_puyo_cycle_;
     unsigned long clock_cycle_millis_;
     unsigned long next_clock_millis_;
     unsigned long input_clock_cycle_millis_;
@@ -52,6 +54,7 @@ private:
 
     void CreatePuyo(int *puyos);
     void SetPuyo();
+    void SetJammerPuyo();
     bool CheckOverlap(int dx, int dy);
     void MovePuyo(int dx, int dy);
     void TurnPuyo(bool clockwise);

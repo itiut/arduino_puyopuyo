@@ -16,6 +16,7 @@ Game::Game(SNESpad *p_nintendo, LED *p_led) {
     p_nintendo_ = p_nintendo;
     p_led_ = p_led;
 
+    jammer_puyo_cycle_ = 8;
     clock_cycle_millis_ = 1000;
     input_clock_cycle_millis_ = 250;
     down_input_clock_cycle_millis_ = 100;
@@ -54,6 +55,15 @@ void Game::SetPuyo() {
             }
         }
     }
+}
+
+void Game::SetJammerPuyo() {
+    for (int x = 1; x < kFieldWidth - 1; x++) {
+        if (field_float_[0][x] == 0) {
+            field_float_[0][x] = 7;
+        }
+    }
+    FallPuyo();
 }
 
 bool Game::CheckOverlap(int dx, int dy) {
@@ -195,7 +205,7 @@ bool Game::DeletePuyo(int cx, int cy) {
 
     for (int y = 0; y < kFieldHeight - 1; y++) {
         for (int x = 1; x < kFieldWidth - 1; x++) {
-            if (field_check_[y][x] == 1) {
+            if (field_check_[y][x] == 1 || field_check_[y][x] == 2) {
                 field_float_[y][x] = 0;
             }
         }
@@ -207,7 +217,11 @@ void Game::RecCheckNeighboring(int x, int y, int value, int d) {
     if (x < 1 || kFieldWidth - 1 <= x || y < 0 || kFieldHeight - 1 <= y || field_check_[y][x] > 0) {
         return;
     }
-    if (field_float_[y][x] != value) {
+    if (field_float_[y][x] == 7) {
+        // おじゃまぷよ
+        field_check_[y][x] = 2;
+        return;
+    } else if (field_float_[y][x] != value) {
         // 検索している色と違う色だったら、訪問済みに
         field_check_[y][x] = 3;
         return;
@@ -255,6 +269,7 @@ void Game::Show() {
 
 void Game::Init() {
     is_over_ = false;
+    jammer_puyo_counter_ = jammer_puyo_cycle_;
 
     memset(field_fixed_, 0, sizeof(field_fixed_));
     memset(field_float_, 0, sizeof(field_float_));
@@ -312,6 +327,11 @@ void Game::Start() {
                 while (SearchAndDeletePuyo()) {
                     Blink();
                     FallPuyo();
+                }
+                // おじゃまぷよを配置
+                if (--jammer_puyo_counter_ < 0) {
+                    SetJammerPuyo();
+                    jammer_puyo_counter_ = jammer_puyo_cycle_;
                 }
                 // 新しいぷよを配置
                 SetPuyo();
