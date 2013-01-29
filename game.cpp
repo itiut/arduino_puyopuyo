@@ -19,9 +19,11 @@ Game::Game(SNESpad *p_nintendo, LED *p_led) {
 Game::~Game() {
 }
 
-void Game::CreatePuyo(unsigned char *puyos) {
+void Game::CreatePuyo(int *puyos) {
     puyos[0] = random(1, kColorNum - 1);
     puyos[1] = random(1, kColorNum - 1);
+    Serial.println(puyos[0], HEX);
+    Serial.println(puyos[1], HEX);
 }
 
 
@@ -38,8 +40,8 @@ void Game::SetPuyo() {
     // ぷよをフィールドに配置
     puyo_.x_ = 3;
     puyo_.y_ = 0;
-    for (unsigned char y = 0; y < kPuyoHeight; y++) {
-        for (unsigned char x = 0; x < kPuyoWidth; x++) {
+    for (int y = 0; y < kPuyoHeight; y++) {
+        for (int x = 0; x < kPuyoWidth; x++) {
             field_float_[puyo_.y_ + y][puyo_.x_ + x] += puyo_.field_[y][x];
 
             // 重なっていたらゲームオーバー
@@ -51,14 +53,14 @@ void Game::SetPuyo() {
     }
 }
 
-bool Game::CheckOverlap(char dx, char dy) {
-    char nx = puyo_.x_ + dx;
-    char ny = puyo_.y_ + dy;
+bool Game::CheckOverlap(int dx, int dy) {
+    int nx = puyo_.x_ + dx;
+    int ny = puyo_.y_ + dy;
     if (nx < 0) {
         return true;
     }
-    for (unsigned char y = 0; y < kPuyoHeight; y++) {
-        for (unsigned char x = 0; x < kPuyoWidth; x++) {
+    for (int y = 0; y < kPuyoHeight; y++) {
+        for (int x = 0; x < kPuyoWidth; x++) {
             if (puyo_.field_[y][x] > 0 && field_fixed_[ny + y][nx + x] != 0) {
                 return true;
             }
@@ -67,13 +69,13 @@ bool Game::CheckOverlap(char dx, char dy) {
     return false;
 }
 
-void Game::MovePuyo(char dx, char dy) {
+void Game::MovePuyo(int dx, int dy) {
     memcpy(field_float_, field_fixed_, sizeof(field_float_));
 
     puyo_.x_ += dx;
     puyo_.y_ += dy;
-    for (unsigned char y = 0; y < kPuyoHeight; y++) {
-        for (unsigned char x = 0; x < kPuyoWidth; x++) {
+    for (int y = 0; y < kPuyoHeight; y++) {
+        for (int x = 0; x < kPuyoWidth; x++) {
             field_float_[puyo_.y_ + y][puyo_.x_ + x] += puyo_.field_[y][x];
         }
     }
@@ -81,17 +83,17 @@ void Game::MovePuyo(char dx, char dy) {
 
 void Game::TurnPuyo(bool clockwise) {
     Serial.println(clockwise);
-    unsigned char temp_field[kPuyoHeight][kPuyoWidth];
+    int temp_field[kPuyoHeight][kPuyoWidth];
     memcpy(temp_field, puyo_.field_, sizeof(temp_field));
 
     if (clockwise) {
-        unsigned char temp_value = puyo_.field_[0][1];
+        int temp_value = puyo_.field_[0][1];
         puyo_.field_[0][1] = puyo_.field_[1][0];
         puyo_.field_[1][0] = puyo_.field_[2][1];
         puyo_.field_[2][1] = puyo_.field_[1][2];
         puyo_.field_[1][2] = temp_value;
     } else {
-        unsigned char temp_value = puyo_.field_[0][1];
+        int temp_value = puyo_.field_[0][1];
         puyo_.field_[0][1] = puyo_.field_[1][2];
         puyo_.field_[1][2] = puyo_.field_[2][1];
         puyo_.field_[2][1] = puyo_.field_[1][0];
@@ -141,16 +143,16 @@ void Game::Init() {
     memset(field_float_vanish_, 0, sizeof(field_float_vanish_));
 
     // TODO: マジックナンバー9をどうにかする
-    for (unsigned char y = 0; y < kFieldHeight; y++) {
+    for (int y = 0; y < kFieldHeight; y++) {
         field_fixed_[y][0] = field_fixed_[y][kFieldWidth - 1] = 9;
         field_float_[y][0] = field_float_[y][kFieldWidth - 1] = 9;
     }
-    for (unsigned char x = 0; x < kFieldWidth; x++) {
+    for (int x = 0; x < kFieldWidth; x++) {
         field_fixed_[kFieldHeight - 1][x] = field_float_[kFieldHeight - 1][x] = 9;
     }
 
     CreatePuyo(next_puyos);
-    CreatePuyo(next_puyos);
+    CreatePuyo(next2_puyos);
     SetPuyo();
 
     Show();
@@ -160,13 +162,15 @@ void Game::Init() {
 
 
 void Game::Show() {
-    for (unsigned char y = 0; y < kHeight; y++) {
-        for (unsigned char x = 0; x < kWidth; x++) {
+    for (int y = 0; y < kHeight; y++) {
+        for (int x = 0; x < kWidth; x++) {
             p_led_->SetColor(x, y, kPuyoColors[field_float_[y][x+1]]);
         }
     }
 
     // TODO: マジックナンバーなんとかする
+    Serial.println(next_puyos[0], HEX);
+    Serial.println(next_puyos[1], HEX);
     p_led_->SetColor(72, kPuyoColors[next_puyos[0]]);
     p_led_->SetColor(73, kPuyoColors[next_puyos[1]]);
     p_led_->SetColor(74, kPuyoColors[next2_puyos[0]]);

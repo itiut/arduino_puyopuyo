@@ -6,30 +6,30 @@
 
 class Game {
 private:
-    static const unsigned char kWidth = 6;
-    static const unsigned char kHeight = 12;
-    static const unsigned char kVanish = 4; /* 消去に必要な個数 */
-    static const unsigned char kColorNum = 8; /* 色数 */
-    static const unsigned char kFieldWidth = kWidth + 2;
-    static const unsigned char kFieldHeight = kHeight + 1;
-    static const unsigned char kPuyoWidth = 3;
-    static const unsigned char kPuyoHeight = 3;
+    static const int kWidth = 6;
+    static const int kHeight = 12;
+    static const int kVanish = 4; /* 消去に必要な個数 */
+    static const int kColorNum = 8; /* 色数 */
+    static const int kFieldWidth = kWidth + 2;
+    static const int kFieldHeight = kHeight + 1;
+    static const int kPuyoWidth = 3;
+    static const int kPuyoHeight = 3;
     static const COLOR kPuyoColors[kColorNum];
 
-    unsigned char field_fixed_[kFieldHeight][kFieldWidth]; /* 固定 */
-    unsigned char field_float_[kFieldHeight][kFieldWidth]; /* 固定+浮遊 */
-    unsigned char field_fixed_vanish_[kFieldHeight][kFieldWidth];
-    unsigned char field_float_vanish_[kFieldHeight][kFieldWidth];
+    int field_fixed_[kFieldHeight][kFieldWidth]; /* 固定 */
+    int field_float_[kFieldHeight][kFieldWidth]; /* 固定+浮遊 */
+    int field_fixed_vanish_[kFieldHeight][kFieldWidth];
+    int field_float_vanish_[kFieldHeight][kFieldWidth];
 
     struct Puyo {
-        unsigned char x_;
-        unsigned char y_;
-        unsigned char field_[kPuyoWidth][kPuyoHeight];
+        int x_;
+        int y_;
+        int field_[kPuyoWidth][kPuyoHeight];
     };
 
     Puyo puyo_;
-    unsigned char next_puyos[2];
-    unsigned char next2_puyos[2];
+    int next_puyos[2];
+    int next2_puyos[2];
 
     SNESpad *p_nintendo_;
     LED *p_led_;
@@ -40,10 +40,10 @@ private:
     unsigned long input_clock_cycle_millis_;
     unsigned long next_input_clock_millis_;
 
-    void CreatePuyo(unsigned char *puyos);
+    void CreatePuyo(int *puyos);
     void SetPuyo();
-    bool CheckOverlap(char dx, char dy);
-    void MovePuyo(char dx, char dy);
+    bool CheckOverlap(int dx, int dy);
+    void MovePuyo(int dx, int dy);
     void TurnPuyo(bool clockwise);
     void ControlPuyo(int input);
     void Init();
