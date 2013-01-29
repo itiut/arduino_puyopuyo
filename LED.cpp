@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <Tlc5940.h>
 #include "LED.h"
 
@@ -48,4 +49,14 @@ void LED::SetAllColor(COLOR c) {
     for (int i = 0; i < LED::kLEDNum; i++) {
         LED::SetColorNC(i, c);
     }
+}
+
+void LED::SetAnalogColor(int x, int y, int r, int g, int b) {
+    if (x < 0 || LED::kWidth <= x || y < 0 || LED::kHeight <= y) {
+        return;
+    }
+    int channel = (y * LED::kWidth + x) * 3;
+    Tlc.set(channel, constrain(r, 0, LED::kMaxValue));
+    Tlc.set(channel + 1, constrain(g, 0, LED::kMaxValue));
+    Tlc.set(channel + 2, constrain(b, 0, LED::kMaxValue));
 }

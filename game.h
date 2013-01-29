@@ -24,6 +24,7 @@ private:
     static const int kBlinkClockMillis = 80;
     static const int kGameOverBlinkNum = 5;
     static const int kGameOverBlinkClockMillis = 400;
+    static const int kGameResetIntervalMillis = 500;
     static const int kEffectClockMillis = 10;
     static const int kResetInput = SNES_START | SNES_SELECT | SNES_L | SNES_R;
 

@@ -326,6 +326,7 @@ void Game::Reset() {
         LED::Update();
         delay(kEffectClockMillis);
     }
+    delay(kGameResetIntervalMillis);
 }
 
 void Game::Over() {

@@ -5,22 +5,22 @@
 
 class Graphic {
 private:
-    static const bool One[12][6];
-    static const bool Two[12][6];
-    static const bool Three[12][6];
+    typedef bool led_array_t[LED::kHeight][LED::kWidth];
 
-    static const bool A[12][6];
-    static const bool E[12][6];
-    static const bool G[12][6];
-    static const bool M[12][6];
-    static const bool O[12][6];
-    static const bool R[12][6];
-    static const bool V[12][6];
+    static const led_array_t one;
+    static const led_array_t two;
+    static const led_array_t three;
+
+    static const int kClearClockMillis = 10;
+    static const int kCountDownDelayMillis = 250;
+    static const int kCountDownClockMillis = 1000;
+
+    Graphic();
+
+    static void PrintChar(char ch, COLOR color, int delay_millis);
 
 public:
     static void CountDown();
-    static void PrintStr(char *str, COLOR color, int delayTime);
-    static void PrintChar(char ch, COLOR color, int slide);
 };
 
 #endif /* _GRAPHIC_H_ */

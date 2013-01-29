@@ -16,9 +16,10 @@ enum COLOR {
 
 class LED {
 private:
-    static const int kRedValue   = 100;
-    static const int kGreenValue = 100;
-    static const int kBlueValue  = 100;
+    static const int kMaxValue = 4095;
+    static const int kRedValue   = 200;
+    static const int kGreenValue = 300;
+    static const int kBlueValue  = 300;
 
     LED();
     static void SetColorNC(int index, COLOR c);
@@ -34,6 +35,7 @@ public:
     static void SetColor(int index, COLOR c);
     static void SetColor(int x, int y, COLOR c);
     static void SetAllColor(COLOR c);
+    static void SetAnalogColor(int x, int y, int r, int g, int b);
 };
 
 #endif /* _LED_H_ */
