@@ -28,8 +28,8 @@ private:
     };
 
     Puyo puyo_;
-    Puyo puyo_next_;
-    Puyo puyo_next2_;
+    unsigned char next_puyos[2];
+    unsigned char next2_puyos[2];
 
     SNESpad *p_nintendo_;
     LED *p_led_;
@@ -38,10 +38,10 @@ private:
     unsigned long clock_cycle_millis_;
     unsigned long next_clock_millis_;
 
-    void CreatePuyo(Puyo *p_puyo);
-    void SetNextPuyo();
-    bool CheckOverlap(Puyo *p_puyo, unsigned char dx, unsigned char dy);
-    void MovePuyo(Puyo *p_puyo, unsigned char dx, unsigned char dy);
+    void CreatePuyo(unsigned char *puyos);
+    void SetPuyo();
+    bool CheckOverlap(unsigned char dx, unsigned char dy);
+    void MovePuyo(unsigned char dx, unsigned char dy);
     void Init();
     void Show();
 

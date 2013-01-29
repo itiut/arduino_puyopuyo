@@ -18,18 +18,21 @@ Game::Game(SNESpad *p_nintendo, LED *p_led) {
 Game::~Game() {
 }
 
-void Game::CreatePuyo(Puyo *p_puyo) {
-    p_puyo->x_ = p_puyo->y_ = 0;
-    memset(&p_puyo->field_, 0, sizeof(p_puyo->field_));
-    p_puyo->field_[0][1] = random(kColorNum);
-    p_puyo->field_[1][1] = random(kColorNum);
+void Game::CreatePuyo(unsigned char *puyos) {
+    puyos[0] = random(1, kColorNum - 1);
+    puyos[1] = random(1, kColorNum - 1);
 }
 
 
-void Game::SetNextPuyo() {
-    memcpy(&puyo_, &puyo_next_, sizeof(Puyo));
-    memcpy(&puyo_next_, &puyo_next2_, sizeof(Puyo));
-    CreatePuyo(&puyo_next2_);
+void Game::SetPuyo() {
+    // current <= next
+    memset(&puyo_.field_, 0, sizeof(puyo_.field_));
+    puyo_.field_[0][1] = next_puyos[0];
+    puyo_.field_[1][1] = next_puyos[1];
+    // next <= next2
+    memcpy(next_puyos, next2_puyos, sizeof(next_puyos));
+    // create next2
+    CreatePuyo(next2_puyos);
 
     // ぷよをフィールドに配置
     puyo_.x_ = 3;
@@ -47,12 +50,12 @@ void Game::SetNextPuyo() {
     }
 }
 
-bool Game::CheckOverlap(Puyo *p_puyo, unsigned char dx, unsigned char dy) {
-    unsigned char nx = p_puyo->x_ + dx;
-    unsigned char ny = p_puyo->y_ + dy;
+bool Game::CheckOverlap(unsigned char dx, unsigned char dy) {
+    unsigned char nx = puyo_.x_ + dx;
+    unsigned char ny = puyo_.y_ + dy;
     for (unsigned char y = 0; y < kPuyoHeight; y++) {
         for (unsigned char x = 0; x < kPuyoWidth; x++) {
-            if (p_puyo->field_[y][x] > 0 && field_fixed_[ny + y][nx + x] != 0) {
+            if (puyo_.field_[y][x] > 0 && field_fixed_[ny + y][nx + x] != 0) {
                 return true;
             }
         }
@@ -60,15 +63,15 @@ bool Game::CheckOverlap(Puyo *p_puyo, unsigned char dx, unsigned char dy) {
     return false;
 }
 
-void Game::MovePuyo(Puyo *p_puyo, unsigned char dx, unsigned char dy) {
+void Game::MovePuyo(unsigned char dx, unsigned char dy) {
     memcpy(field_float_, field_fixed_, sizeof(field_float_));
 
-    p_puyo->x_ += dx;
-    p_puyo->y_ += dy;
+    puyo_.x_ += dx;
+    puyo_.y_ += dy;
 
     for (unsigned char y = 0; y < kPuyoHeight; y++) {
         for (unsigned char x = 0; x < kPuyoWidth; x++) {
-            field_float_[p_puyo->y_ + y][p_puyo->x_ + x] += p_puyo->field_[y][x];
+            field_float_[puyo_.y_ + y][puyo_.x_ + x] += puyo_.field_[y][x];
         }
     }
 }
@@ -90,9 +93,9 @@ void Game::Init() {
         field_fixed_[kFieldHeight - 1][x] = field_float_[kFieldHeight - 1][x] = 9;
     }
 
-    CreatePuyo(&puyo_next_);
-    CreatePuyo(&puyo_next2_);
-    SetNextPuyo();
+    CreatePuyo(next_puyos);
+    CreatePuyo(next_puyos);
+    SetPuyo();
 
     Show();
     next_clock_millis_ = millis() + clock_cycle_millis_;
@@ -107,10 +110,10 @@ void Game::Show() {
     }
 
     // TODO: マジックナンバーなんとかする
-    p_led_->SetColor(72, kPuyoColors[puyo_next_.field_[0][1]]);
-    p_led_->SetColor(73, kPuyoColors[puyo_next_.field_[1][1]]);
-    p_led_->SetColor(74, kPuyoColors[puyo_next2_.field_[0][1]]);
-    p_led_->SetColor(75, kPuyoColors[puyo_next2_.field_[1][1]]);
+    p_led_->SetColor(72, kPuyoColors[next_puyos[0]]);
+    p_led_->SetColor(73, kPuyoColors[next_puyos[1]]);
+    p_led_->SetColor(74, kPuyoColors[next2_puyos[0]]);
+    p_led_->SetColor(75, kPuyoColors[next2_puyos[1]]);
 
     p_led_->Update();
 }
@@ -129,9 +132,9 @@ void Game::Start() {
         unsigned long time_millis = millis();
         if (time_millis >= next_clock_millis_) {
             // まだ落ちるとき
-            if (!CheckOverlap(&puyo_, 0, 1)) {
+            if (!CheckOverlap(0, 1)) {
                 // 一マス下に移動
-                MovePuyo(&puyo_, 0, 1);
+                MovePuyo(0, 1);
             } else {
                 is_over_ = true;
                 // 固定
