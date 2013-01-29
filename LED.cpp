@@ -28,6 +28,7 @@ void LED::SetColor(int index, COLOR c) {
     if (index < 0 || LED::kLEDNum <= index) {
         return;
     }
+    // 配線ミスにより、次ぷよ組みと次々ぷよ組の順番が逆になったので修正
     if (index == LED::kLEDNum - 4 || index == LED::kLEDNum - 3) {
         index += 2;
     } else if (index == LED::kLEDNum - 2 || index == LED::kLEDNum - 1) {
