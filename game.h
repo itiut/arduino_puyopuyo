@@ -21,9 +21,10 @@ private:
     static const int kDeletePuyoNum = 4; /* 消去に必要な個数 */
     static const int kFallClockMillis = 100;
     static const int kBlinkNum = 4;
-    static const int kBlinkClockMillis = 100;
+    static const int kBlinkClockMillis = 80;
     static const int kGameOverBlinkNum = 5;
     static const int kGameOverBlinkClockMillis = 400;
+    static const int kEffectClockMillis = 10;
     static const int kResetInput = SNES_START | SNES_SELECT | SNES_L | SNES_R;
 
     int field_fixed_[kFieldHeight][kFieldWidth]; /* 固定 */
@@ -68,7 +69,9 @@ private:
     void RecCheckNeighboring(int x, int y, int value, int d);
     void Blink();
     void Show();
+    void Reset();
     void Stop();
+    void Over();
     void Init();
 
 public:

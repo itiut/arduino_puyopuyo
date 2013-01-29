@@ -258,11 +258,10 @@ void Game::Show() {
         }
     }
 
-    // TODO: マジックナンバーなんとかする
-    p_led_->SetColor(72, kPuyoColors[next_puyos[0]]);
-    p_led_->SetColor(73, kPuyoColors[next_puyos[1]]);
-    p_led_->SetColor(74, kPuyoColors[next2_puyos[0]]);
-    p_led_->SetColor(75, kPuyoColors[next2_puyos[1]]);
+    p_led_->SetColor(p_led_->kLEDNum - 4, kPuyoColors[next_puyos[0]]);
+    p_led_->SetColor(p_led_->kLEDNum - 3, kPuyoColors[next_puyos[1]]);
+    p_led_->SetColor(p_led_->kLEDNum - 2, kPuyoColors[next2_puyos[0]]);
+    p_led_->SetColor(p_led_->kLEDNum - 1, kPuyoColors[next2_puyos[1]]);
 
     p_led_->Update();
 }
@@ -282,6 +281,65 @@ void Game::Stop() {
     time_millis = millis();
     next_clock_millis_ = time_millis + diff_next_clock_millis;
     next_input_clock_millis_ = time_millis + diff_next_input_clock_millis;
+}
+
+void Game::Reset() {
+    // 色有りぷよを白に
+    for (int y = kHeight - 1; y >= 0; y--) {
+        for (int x = 0; x < kWidth; x++) {
+            int xx = (y % 2) ? x : kWidth - 1 - x;
+            if (field_float_[y + 1][xx + 1]) {
+                p_led_->SetColor(xx, y, WHITE);
+                p_led_->Update();
+                delay(kEffectClockMillis);
+            }
+        }
+    }
+    for (int i = p_led_->kLEDNum - 4; i < p_led_->kLEDNum; i++) {
+        p_led_->SetColor(i, WHITE);
+        p_led_->Update();
+        delay(kEffectClockMillis);
+    }
+
+    // 全面白に
+    for (int y = kHeight - 1; y >= 0; y--) {
+        for (int x = 0; x < kWidth; x++) {
+            int xx = (y % 2) ? x : kWidth - 1 - x;
+            if (!field_float_[y + 1][xx + 1]) {
+                p_led_->SetColor(xx, y, WHITE);
+                p_led_->Update();
+                delay(kEffectClockMillis);
+            }
+        }
+    }
+
+    // 全面クリア
+    for (int y = kHeight - 1; y >= 0; y--) {
+        for (int x = 0; x < kWidth; x++) {
+            int xx = (y % 2) ? x : kWidth - 1 - x;
+            p_led_->SetColor(xx, y, CLEAR);
+            p_led_->Update();
+            delay(kEffectClockMillis);
+        }
+    }
+    for (int i = p_led_->kLEDNum - 4; i < p_led_->kLEDNum; i++) {
+        p_led_->SetColor(i, CLEAR);
+        p_led_->Update();
+        delay(kEffectClockMillis);
+    }
+}
+
+void Game::Over() {
+    // ブリンク
+    memcpy(field_float_, field_fixed_, sizeof(field_float_));
+    for (int i = 0; i < kGameOverBlinkNum; i++) {
+        p_led_->ClearAll();
+        p_led_->Update();
+        delay(kGameOverBlinkClockMillis);
+        Show();
+        delay(kGameOverBlinkClockMillis);
+    }
+    Reset();
 }
 
 void Game::Init() {
@@ -318,6 +376,7 @@ void Game::Start() {
         if (int input = p_nintendo_->buttons()) {
             // リセット
             if ((input & kResetInput) == kResetInput) {
+                Reset();
                 return;
             }
             // ストップ
@@ -366,14 +425,5 @@ void Game::Start() {
             next_clock_millis_ = millis() + clock_cycle_millis_;
         }
     }
-
-    // ゲームオーバー
-    memcpy(field_float_, field_fixed_, sizeof(field_float_));
-    for (int i = 0; i < kGameOverBlinkNum; i++) {
-        p_led_->ClearAll();
-        p_led_->Update();
-        delay(kGameOverBlinkClockMillis);
-        Show();
-        delay(kGameOverBlinkClockMillis);
-    }
+    Over();
 }

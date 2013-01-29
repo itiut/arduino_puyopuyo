@@ -18,8 +18,7 @@ void setup() {
 }
 
 void loop() {
-  int input = nintendo.buttons();
-  if (input & SNES_START) {
+  if (nintendo.buttons() & SNES_START) {
     /* スタートボタンを離したらゲームスタート */
     while (nintendo.buttons() & SNES_START);
     game.Start();
