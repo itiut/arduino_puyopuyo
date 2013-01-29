@@ -24,6 +24,7 @@ private:
     static const int kBlinkClockMillis = 100;
     static const int kGameOverBlinkNum = 5;
     static const int kGameOverBlinkClockMillis = 400;
+    static const int kResetInput = 0xc0c; /* START, SELECT, L, R */
 
     int field_fixed_[kFieldHeight][kFieldWidth]; /* 固定 */
     int field_float_[kFieldHeight][kFieldWidth]; /* 固定+浮遊 (表示用) */

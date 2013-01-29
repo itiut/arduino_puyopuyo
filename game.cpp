@@ -299,6 +299,11 @@ void Game::Start() {
 
         // 入力
         if (int input = p_nintendo_->buttons()) {
+            // リセット
+            if ((input & kResetInput) == kResetInput) {
+                return;
+            }
+
             unsigned long input_time_millis = millis();
             if (input_time_millis > next_input_clock_millis_) {
                 ControlPuyo(input);
