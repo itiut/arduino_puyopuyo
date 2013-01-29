@@ -1,59 +1,22 @@
 #include <Tlc5940.h>
+#include <SNESpad.h>
 #include "LED.h"
-/* #include <SNESpad.h> */
-/* SNESpad nintendo = SNESpad(6, 5, 7); */
-/* byte state = 0; */
+#include "game.h"
 
+SNESpad nintendo = SNESpad(6, 5, 7);
+LED led = LED();
+Game game = Game(&nintendo, &led);
 
 void setup() {
-  LED::Init();
-  /* Serial.begin(9600); */
+  led.Setup();
+  led.SetAllColor(RED);
+  led.Update();
 }
 
 void loop() {
-  /* state = nintendo.buttons(); */
-  /* Serial.println(~state, BIN); */
-  /* delay(1000); */
-
-  /* for (int i = 0; i < 76; i++) { */
-  /*   LED::SetColor(i, AQUA); */
-  /* } */
-  /* LED::Update(); */
-  /* delay(1000); */
-
-  /* for (int i = 0; i < 76; i++) { */
-  /*   LED::SetColor(i, MAGENTA); */
-  /* } */
-  /* LED::Update(); */
-  /* delay(1000); */
-
-  /* for (int i = 0; i < 76; i++) { */
-  /*   LED::SetColor(i, YELLOW); */
-  /* } */
-  /* LED::Update(); */
-  /* delay(1000); */
-
-  for (int y = 0; y < LED::kHeight; y++) {
-    for (int x = 0; x < LED::kWidth; x++) {
-      LED::SetColor(x, y, RED);
-    }
+  byte state = nintendo.buttons();
+  if (state & SNES_START) {
+    game.Start();
   }
-  LED::Update();
-  delay(1000);
-
-  for (int y = 0; y < LED::kHeight; y++) {
-    for (int x = 0; x < LED::kWidth; x++) {
-      LED::SetColor(x, y, GREEN);
-    }
-  }
-  LED::Update();
-  delay(1000);
-
-  for (int y = 0; y < LED::kHeight; y++) {
-    for (int x = 0; x < LED::kWidth; x++) {
-      LED::SetColor(x, y, BLUE);
-    }
-  }
-  LED::Update();
-  delay(1000);
+  delay(250);
 }
