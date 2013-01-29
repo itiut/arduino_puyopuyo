@@ -18,11 +18,11 @@ void setup() {
 }
 
 void loop() {
-  byte state = nintendo.buttons();
-  if (state & SNES_START) {
-    Serial.println(8888);
+  int input = nintendo.buttons();
+  if (input & SNES_START) {
+    /* スタートボタンを離したらゲームスタート */
+    while (nintendo.buttons() & SNES_START);
     game.Start();
-    Serial.println(9999);
     delay(1000);
     led.SetAllColor(GREEN);
     led.Update();

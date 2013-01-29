@@ -267,6 +267,23 @@ void Game::Show() {
     p_led_->Update();
 }
 
+void Game::Stop() {
+    unsigned long time_millis = millis();
+    unsigned long diff_next_clock_millis = (next_clock_millis_ > time_millis) ? next_clock_millis_ - time_millis : 0;
+    unsigned long diff_next_input_clock_millis = (next_input_clock_millis_ > time_millis) ? next_input_clock_millis_ - time_millis : input_clock_cycle_millis_;
+
+    // ボタンを離すまで無限ループ
+    while (p_nintendo_->buttons() & SNES_START);
+    // ボタンが押されるまで無限ループ
+    while (!(p_nintendo_->buttons() & SNES_START));
+    // ボタンを離すまで無限ループ
+    while (p_nintendo_->buttons() & SNES_START);
+
+    time_millis = millis();
+    next_clock_millis_ = time_millis + diff_next_clock_millis;
+    next_input_clock_millis_ = time_millis + diff_next_input_clock_millis;
+}
+
 void Game::Init() {
     is_over_ = false;
     jammer_puyo_counter_ = jammer_puyo_cycle_;
@@ -302,6 +319,11 @@ void Game::Start() {
             // リセット
             if ((input & kResetInput) == kResetInput) {
                 return;
+            }
+            // ストップ
+            if (input & SNES_START) {
+                Stop();
+                continue;
             }
 
             unsigned long input_time_millis = millis();

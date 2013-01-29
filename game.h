@@ -68,6 +68,7 @@ private:
     void RecCheckNeighboring(int x, int y, int value, int d);
     void Blink();
     void Show();
+    void Stop();
     void Init();
 
 public:
