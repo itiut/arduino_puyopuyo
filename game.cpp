@@ -168,7 +168,7 @@ void Game::LockPuyo() {
 void Game::Show() {
     for (int y = 0; y < kHeight; y++) {
         for (int x = 0; x < kWidth; x++) {
-            p_led_->SetColor(x, y, kPuyoColors[field_float_[y][x+1]]);
+            p_led_->SetColor(x, y, kPuyoColors[field_float_[y + 1][x + 1]]);
         }
     }
 

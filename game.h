@@ -11,7 +11,7 @@ private:
     static const int kVanish = 4; /* 消去に必要な個数 */
     static const int kColorNum = 8; /* 色数 */
     static const int kFieldWidth = kWidth + 2;
-    static const int kFieldHeight = kHeight + 1;
+    static const int kFieldHeight = kHeight + 2;
     static const int kPuyoWidth = 3;
     static const int kPuyoHeight = 3;
     static const COLOR kPuyoColors[kColorNum];
