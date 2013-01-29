@@ -46,6 +46,8 @@ private:
     void MovePuyo(int dx, int dy);
     void TurnPuyo(bool clockwise);
     void ControlPuyo(int input);
+    void LockPuyo();
+
     void Init();
     void Show();
 

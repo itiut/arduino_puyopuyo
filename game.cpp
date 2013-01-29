@@ -36,7 +36,7 @@ void Game::SetPuyo() {
     CreatePuyo(next2_puyos);
 
     // ぷよをフィールドに配置
-    puyo_.x_ = 3;
+    puyo_.x_ = 2;
     puyo_.y_ = 0;
     for (int y = 0; y < kPuyoHeight; y++) {
         for (int x = 0; x < kPuyoWidth; x++) {
@@ -161,6 +161,10 @@ void Game::Init() {
 }
 
 
+void Game::LockPuyo() {
+    memcpy(field_fixed_, field_float_, sizeof(field_fixed_));
+}
+
 void Game::Show() {
     for (int y = 0; y < kHeight; y++) {
         for (int x = 0; x < kWidth; x++) {
@@ -186,29 +190,29 @@ void Game::Start() {
             unsigned long input_time_millis = millis();
             if (input_time_millis > next_input_clock_millis_) {
                 ControlPuyo(input);
+                // TODO: Down押しっぱなし時のクロックを短めに
                 next_input_clock_millis_ = millis() + input_clock_cycle_millis_;
             }
         } else {
             next_input_clock_millis_ = 0;
         }
 
-
         // 一定時間たったとき
         unsigned long time_millis = millis();
         if (time_millis > next_clock_millis_) {
             // まだ落ちるとき
             if (!CheckOverlap(0, 1)) {
-                // 一マス下に移動
+                // 1マス下に移動
                 MovePuyo(0, 1);
             } else {
-                is_over_ = true;
                 // 固定
-
+                LockPuyo();
                 // 浮いてるぷよを落とす
 
                 // 連鎖と移動
 
-                // 新しいぷよ生成
+                // 新しいぷよを配置
+                SetPuyo();
             }
             // 次クロック確定
             next_clock_millis_ = millis() + clock_cycle_millis_;
