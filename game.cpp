@@ -43,7 +43,7 @@ void Game::SetPuyo() {
             field_float_[puyo_.y_ + y][puyo_.x_ + x] += puyo_.field_[y][x];
 
             // 重なっていたらゲームオーバー
-            if (field_float_[puyo_.y_ + y][puyo_.x_ + x] != puyo_.field_[y][x]) {
+            if (puyo_.field_[y][x] && field_float_[puyo_.y_ + y][puyo_.x_ + x] != puyo_.field_[y][x]) {
                 is_over_ = true;
                 return;
             }
@@ -59,7 +59,7 @@ bool Game::CheckOverlap(int dx, int dy) {
     }
     for (int y = 0; y < kPuyoHeight; y++) {
         for (int x = 0; x < kPuyoWidth; x++) {
-            if (puyo_.field_[y][x] > 0 && field_fixed_[ny + y][nx + x] != 0) {
+            if (puyo_.field_[y][x] && field_fixed_[ny + y][nx + x] != 0) {
                 return true;
             }
         }
@@ -134,6 +134,35 @@ void Game::ControlPuyo(int input) {
     }
 }
 
+void Game::LockPuyo() {
+    memcpy(field_fixed_, field_float_, sizeof(field_fixed_));
+}
+
+void Game::FallPuyo() {
+    while (SlideOneRaw()) {
+        delay(kFallDelayMillis);
+        Show();
+    }
+    memcpy(field_fixed_, field_float_, sizeof(field_fixed_));
+}
+
+bool Game::SlideOneRaw() {
+    bool slide = false;
+    for (int y = kFieldHeight - 2; y > 0; y--) {
+        for (int x = 1; x < kFieldWidth - 1; x++) {
+            if (field_float_[y][x] == 0 && field_float_[y - 1][x] != 0) {
+                field_float_[y][x] = field_float_[y - 1][x];
+                field_float_[y - 1][x] = 0;
+                // 必要?
+                field_float_vanish_[y][x] = field_float_vanish_[y - 1][x];
+                field_float_vanish_[y - 1][x] = 0;
+                slide = true;
+            }
+        }
+    }
+    return slide;
+}
+
 void Game::Init() {
     is_over_ = false;
 
@@ -155,14 +184,8 @@ void Game::Init() {
     CreatePuyo(next2_puyos);
     SetPuyo();
 
-    Show();
     next_clock_millis_ = millis() + clock_cycle_millis_;
     next_input_clock_millis_ = 0;
-}
-
-
-void Game::LockPuyo() {
-    memcpy(field_fixed_, field_float_, sizeof(field_fixed_));
 }
 
 void Game::Show() {
@@ -185,6 +208,9 @@ void Game::Start() {
     Init();
 
     while (!is_over_) {
+        // 描画
+        Show();
+
         // 入力
         if (int input = p_nintendo_->buttons()) {
             unsigned long input_time_millis = millis();
@@ -194,6 +220,7 @@ void Game::Start() {
                 next_input_clock_millis_ = millis() + input_clock_cycle_millis_;
             }
         } else {
+            // 押しっぱなし解除時にはすぐに入力を受け付ける
             next_input_clock_millis_ = 0;
         }
 
@@ -208,7 +235,7 @@ void Game::Start() {
                 // 固定
                 LockPuyo();
                 // 浮いてるぷよを落とす
-
+                FallPuyo();
                 // 連鎖と移動
 
                 // 新しいぷよを配置
@@ -217,8 +244,5 @@ void Game::Start() {
             // 次クロック確定
             next_clock_millis_ = millis() + clock_cycle_millis_;
         }
-
-        // 描写
-        Show();
     }
 }

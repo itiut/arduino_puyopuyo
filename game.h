@@ -15,6 +15,7 @@ private:
     static const int kPuyoWidth = 3;
     static const int kPuyoHeight = 3;
     static const COLOR kPuyoColors[kColorNum];
+    static const int kFallDelayMillis = 100;
 
     int field_fixed_[kFieldHeight][kFieldWidth]; /* 固定 */
     int field_float_[kFieldHeight][kFieldWidth]; /* 固定+浮遊 */
@@ -47,6 +48,9 @@ private:
     void TurnPuyo(bool clockwise);
     void ControlPuyo(int input);
     void LockPuyo();
+    void FallPuyo();
+
+    bool SlideOneRaw();
 
     void Init();
     void Show();
