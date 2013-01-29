@@ -37,11 +37,15 @@ private:
     bool is_over_;
     unsigned long clock_cycle_millis_;
     unsigned long next_clock_millis_;
+    unsigned long input_clock_cycle_millis_;
+    unsigned long next_input_clock_millis_;
 
     void CreatePuyo(unsigned char *puyos);
     void SetPuyo();
-    bool CheckOverlap(unsigned char dx, unsigned char dy);
-    void MovePuyo(unsigned char dx, unsigned char dy);
+    bool CheckOverlap(char dx, char dy);
+    void MovePuyo(char dx, char dy);
+    void TurnPuyo(bool clockwise);
+    void ControlPuyo(int input);
     void Init();
     void Show();
 

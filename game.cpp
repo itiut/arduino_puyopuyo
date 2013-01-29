@@ -13,6 +13,7 @@ Game::Game(SNESpad *p_nintendo, LED *p_led) {
     p_led_ = p_led;
 
     clock_cycle_millis_ = 1000;
+    input_clock_cycle_millis_ = 250;
 }
 
 Game::~Game() {
@@ -50,9 +51,12 @@ void Game::SetPuyo() {
     }
 }
 
-bool Game::CheckOverlap(unsigned char dx, unsigned char dy) {
-    unsigned char nx = puyo_.x_ + dx;
-    unsigned char ny = puyo_.y_ + dy;
+bool Game::CheckOverlap(char dx, char dy) {
+    char nx = puyo_.x_ + dx;
+    char ny = puyo_.y_ + dy;
+    if (nx < 0) {
+        return true;
+    }
     for (unsigned char y = 0; y < kPuyoHeight; y++) {
         for (unsigned char x = 0; x < kPuyoWidth; x++) {
             if (puyo_.field_[y][x] > 0 && field_fixed_[ny + y][nx + x] != 0) {
@@ -63,15 +67,67 @@ bool Game::CheckOverlap(unsigned char dx, unsigned char dy) {
     return false;
 }
 
-void Game::MovePuyo(unsigned char dx, unsigned char dy) {
+void Game::MovePuyo(char dx, char dy) {
     memcpy(field_float_, field_fixed_, sizeof(field_float_));
 
     puyo_.x_ += dx;
     puyo_.y_ += dy;
-
     for (unsigned char y = 0; y < kPuyoHeight; y++) {
         for (unsigned char x = 0; x < kPuyoWidth; x++) {
             field_float_[puyo_.y_ + y][puyo_.x_ + x] += puyo_.field_[y][x];
+        }
+    }
+}
+
+void Game::TurnPuyo(bool clockwise) {
+    Serial.println(clockwise);
+    unsigned char temp_field[kPuyoHeight][kPuyoWidth];
+    memcpy(temp_field, puyo_.field_, sizeof(temp_field));
+
+    if (clockwise) {
+        unsigned char temp_value = puyo_.field_[0][1];
+        puyo_.field_[0][1] = puyo_.field_[1][0];
+        puyo_.field_[1][0] = puyo_.field_[2][1];
+        puyo_.field_[2][1] = puyo_.field_[1][2];
+        puyo_.field_[1][2] = temp_value;
+    } else {
+        unsigned char temp_value = puyo_.field_[0][1];
+        puyo_.field_[0][1] = puyo_.field_[1][2];
+        puyo_.field_[1][2] = puyo_.field_[2][1];
+        puyo_.field_[2][1] = puyo_.field_[1][0];
+        puyo_.field_[1][0] = temp_value;
+    }
+
+    if (CheckOverlap(0, 0)) {
+        if (puyo_.field_[1][0] && !CheckOverlap(1, 0)) {
+            // 左側にぷよ -> 右に移動
+            MovePuyo(1, 0);
+        } else if (puyo_.field_[1][2] && !CheckOverlap(-1, 0)) {
+            // 左側にぷよ -> 右に移動
+            MovePuyo(-1, 0);
+        } else {
+            // 回さなかったことにする
+            memcpy(puyo_.field_, temp_field, sizeof(puyo_.field_));
+        }
+    }
+}
+
+void Game::ControlPuyo(int input) {
+    if (input & SNES_A) {
+        TurnPuyo(true);
+    } else if (input & SNES_B) {
+        TurnPuyo(false);
+    } else if (input & SNES_LEFT) {
+        if (!CheckOverlap(-1, 0)) {
+            MovePuyo(-1, 0);
+        }
+    } else if (input & SNES_RIGHT) {
+        if (!CheckOverlap(1, 0)) {
+            MovePuyo(1, 0);
+        }
+    } else if (input & SNES_DOWN) {
+        if (!CheckOverlap(0, 1)) {
+            MovePuyo(0, 1);
         }
     }
 }
@@ -99,6 +155,7 @@ void Game::Init() {
 
     Show();
     next_clock_millis_ = millis() + clock_cycle_millis_;
+    next_input_clock_millis_ = 0;
 }
 
 
@@ -124,13 +181,19 @@ void Game::Start() {
     while (!is_over_) {
         // 入力
         if (int input = p_nintendo_->buttons()) {
-            // 移動
-
+            unsigned long input_time_millis = millis();
+            if (input_time_millis > next_input_clock_millis_) {
+                ControlPuyo(input);
+                next_input_clock_millis_ = millis() + input_clock_cycle_millis_;
+            }
+        } else {
+            next_input_clock_millis_ = 0;
         }
+
 
         // 一定時間たったとき
         unsigned long time_millis = millis();
-        if (time_millis >= next_clock_millis_) {
+        if (time_millis > next_clock_millis_) {
             // まだ落ちるとき
             if (!CheckOverlap(0, 1)) {
                 // 一マス下に移動
