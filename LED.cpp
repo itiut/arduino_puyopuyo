@@ -1,16 +1,20 @@
 #include <Tlc5940.h>
 #include "LED.h"
 
-void LED::Init() {
-    Tlc.init();
+LED::LED() {
 }
 
-void LED::ClearAll() {
-    Tlc.clear();
+void LED::Setup() {
+    // Tlc.init()はsetup()の中でないと動かない?
+    Tlc.init();
 }
 
 void LED::Update() {
     Tlc.update();
+}
+
+void LED::ClearAll() {
+    Tlc.clear();
 }
 
 void LED::SetColorNC(int index, COLOR c) {
