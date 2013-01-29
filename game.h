@@ -6,8 +6,8 @@
 
 class Game {
 private:
-    static const int kWidth = 6;
-    static const int kHeight = 12;
+    static const int kWidth = LED::kWidth;
+    static const int kHeight = LED::kHeight;
     static const int kFieldWidth = kWidth + 2;
     static const int kFieldHeight = kHeight + 2;
     static const int kPuyoWidth = 3;
@@ -44,7 +44,6 @@ private:
     int next2_puyos[2];
 
     SNESpad *p_nintendo_;
-    LED *p_led_;
 
     bool is_over_;
     int jammer_puyo_counter_;
@@ -75,7 +74,7 @@ private:
     void Init();
 
 public:
-    Game(SNESpad *p_nintendo, LED *p_led);
+    Game(SNESpad *p_nintendo);
     virtual ~Game();
 
     void Start();

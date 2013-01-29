@@ -12,9 +12,8 @@ const int Game::kDxs[4] = {0, 1, 0, -1};
 const int Game::kDys[4] = {-1, 0, 1, 0};
 const int Game::kDds[4] = {2, 3, 0, 1};
 
-Game::Game(SNESpad *p_nintendo, LED *p_led) {
+Game::Game(SNESpad *p_nintendo) {
     p_nintendo_ = p_nintendo;
-    p_led_ = p_led;
 
     jammer_puyo_cycle_ = 8;
     clock_cycle_millis_ = 1000;
@@ -243,10 +242,10 @@ void Game::Blink() {
 
         for (int y = 0; y < kHeight; y++) {
             for (int x = 0; x < kWidth; x++) {
-                p_led_->SetColor(x, y, kPuyoColors[field_fixed_[y + 1][x + 1]]);
+                LED::SetColor(x, y, kPuyoColors[field_fixed_[y + 1][x + 1]]);
             }
         }
-        p_led_->Update();
+        LED::Update();
         delay(kBlinkClockMillis);
     }
 }
@@ -254,16 +253,16 @@ void Game::Blink() {
 void Game::Show() {
     for (int y = 0; y < kHeight; y++) {
         for (int x = 0; x < kWidth; x++) {
-            p_led_->SetColor(x, y, kPuyoColors[field_float_[y + 1][x + 1]]);
+            LED::SetColor(x, y, kPuyoColors[field_float_[y + 1][x + 1]]);
         }
     }
 
-    p_led_->SetColor(p_led_->kLEDNum - 4, kPuyoColors[next_puyos[0]]);
-    p_led_->SetColor(p_led_->kLEDNum - 3, kPuyoColors[next_puyos[1]]);
-    p_led_->SetColor(p_led_->kLEDNum - 2, kPuyoColors[next2_puyos[0]]);
-    p_led_->SetColor(p_led_->kLEDNum - 1, kPuyoColors[next2_puyos[1]]);
+    LED::SetColor(LED::kLEDNum - 4, kPuyoColors[next_puyos[0]]);
+    LED::SetColor(LED::kLEDNum - 3, kPuyoColors[next_puyos[1]]);
+    LED::SetColor(LED::kLEDNum - 2, kPuyoColors[next2_puyos[0]]);
+    LED::SetColor(LED::kLEDNum - 1, kPuyoColors[next2_puyos[1]]);
 
-    p_led_->Update();
+    LED::Update();
 }
 
 void Game::Stop() {
@@ -289,15 +288,15 @@ void Game::Reset() {
         for (int x = 0; x < kWidth; x++) {
             int xx = (y % 2) ? x : kWidth - 1 - x;
             if (field_float_[y + 1][xx + 1]) {
-                p_led_->SetColor(xx, y, WHITE);
-                p_led_->Update();
+                LED::SetColor(xx, y, WHITE);
+                LED::Update();
                 delay(kEffectClockMillis);
             }
         }
     }
-    for (int i = p_led_->kLEDNum - 4; i < p_led_->kLEDNum; i++) {
-        p_led_->SetColor(i, WHITE);
-        p_led_->Update();
+    for (int i = LED::kLEDNum - 4; i < LED::kLEDNum; i++) {
+        LED::SetColor(i, WHITE);
+        LED::Update();
         delay(kEffectClockMillis);
     }
 
@@ -306,8 +305,8 @@ void Game::Reset() {
         for (int x = 0; x < kWidth; x++) {
             int xx = (y % 2) ? x : kWidth - 1 - x;
             if (!field_float_[y + 1][xx + 1]) {
-                p_led_->SetColor(xx, y, WHITE);
-                p_led_->Update();
+                LED::SetColor(xx, y, WHITE);
+                LED::Update();
                 delay(kEffectClockMillis);
             }
         }
@@ -317,14 +316,14 @@ void Game::Reset() {
     for (int y = kHeight - 1; y >= 0; y--) {
         for (int x = 0; x < kWidth; x++) {
             int xx = (y % 2) ? x : kWidth - 1 - x;
-            p_led_->SetColor(xx, y, CLEAR);
-            p_led_->Update();
+            LED::SetColor(xx, y, CLEAR);
+            LED::Update();
             delay(kEffectClockMillis);
         }
     }
-    for (int i = p_led_->kLEDNum - 4; i < p_led_->kLEDNum; i++) {
-        p_led_->SetColor(i, CLEAR);
-        p_led_->Update();
+    for (int i = LED::kLEDNum - 4; i < LED::kLEDNum; i++) {
+        LED::SetColor(i, CLEAR);
+        LED::Update();
         delay(kEffectClockMillis);
     }
 }
@@ -333,8 +332,8 @@ void Game::Over() {
     // ブリンク
     memcpy(field_float_, field_fixed_, sizeof(field_float_));
     for (int i = 0; i < kGameOverBlinkNum; i++) {
-        p_led_->ClearAll();
-        p_led_->Update();
+        LED::ClearAll();
+        LED::Update();
         delay(kGameOverBlinkClockMillis);
         Show();
         delay(kGameOverBlinkClockMillis);

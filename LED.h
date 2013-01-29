@@ -20,21 +20,20 @@ private:
     static const int kGreenValue = 100;
     static const int kBlueValue  = 100;
 
-    void SetColorNC(int index, COLOR c);
+    LED();
+    static void SetColorNC(int index, COLOR c);
 
 public:
     static const int kLEDNum = 76;
     static const int kWidth  = 6;
     static const int kHeight = 12;
 
-    LED();
-
-    void Setup();
-    void Update();
-    void ClearAll();
-    void SetColor(int index, COLOR c);
-    void SetColor(int x, int y, COLOR c);
-    void SetAllColor(COLOR c);
+    static void Setup();
+    static void Update();
+    static void ClearAll();
+    static void SetColor(int index, COLOR c);
+    static void SetColor(int x, int y, COLOR c);
+    static void SetAllColor(COLOR c);
 };
 
 #endif /* _LED_H_ */

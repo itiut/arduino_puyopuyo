@@ -1,30 +1,30 @@
-#include <Tlc5940.h>
 #include <SNESpad.h>
 #include "LED.h"
 #include "game.h"
+#include "graphic.h"
 
 SNESpad nintendo = SNESpad(6, 5, 7);
-LED led = LED();
-Game game = Game(&nintendo, &led);
+Game game = Game(&nintendo);
 
 void setup() {
   randomSeed(analogRead(0));
   Serial.begin(9600);
 
-  led.Setup();
+  LED::Setup();
 
-  led.SetAllColor(RED);
-  led.Update();
+  LED::SetAllColor(RED);
+  LED::Update();
 }
 
 void loop() {
   if (nintendo.buttons() & SNES_START) {
     /* スタートボタンを離したらゲームスタート */
     while (nintendo.buttons() & SNES_START);
+
     game.Start();
     delay(1000);
-    led.SetAllColor(GREEN);
-    led.Update();
+    LED::SetAllColor(GREEN);
+    LED::Update();
   }
   delay(250);
 }
