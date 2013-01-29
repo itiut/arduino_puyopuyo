@@ -12,8 +12,9 @@ private:
     static const int kFieldHeight = kHeight + 2;
     static const int kPuyoWidth = 3;
     static const int kPuyoHeight = 3;
-    static const int kColorNum = 8;
-    static const COLOR kPuyoColors[kColorNum];
+    static const int kColorNum = 5;
+    static const int kMaxColorNum = 8;
+    static const COLOR kPuyoColors[kMaxColorNum];
     static const int kDxs[4];
     static const int kDys[4];
     static const int kDds[4];

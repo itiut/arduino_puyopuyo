@@ -4,8 +4,8 @@
 #include "LED.h"
 #include "game.h"
 
-const COLOR Game::kPuyoColors[kColorNum] = {
-    CLEAR, RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW, WHITE,
+const COLOR Game::kPuyoColors[kMaxColorNum] = {
+    CLEAR, RED, GREEN, BLUE, MAGENTA, YELLOW, CYAN, WHITE,
 };
 
 const int Game::kDxs[4] = {0, 1, 0, -1};
@@ -26,8 +26,8 @@ Game::~Game() {
 }
 
 void Game::CreatePuyo(int *puyos) {
-    puyos[0] = random(1, kColorNum - 1);
-    puyos[1] = random(1, kColorNum - 1);
+    puyos[0] = random(1, kColorNum + 1);
+    puyos[1] = random(1, kColorNum + 1);
 }
 
 
@@ -60,7 +60,7 @@ void Game::SetPuyo() {
 void Game::SetJammerPuyo() {
     for (int x = 1; x < kFieldWidth - 1; x++) {
         if (field_float_[0][x] == 0) {
-            field_float_[0][x] = 7;
+            field_float_[0][x] = kMaxColorNum - 1;
         }
     }
     FallPuyo();
@@ -217,7 +217,7 @@ void Game::RecCheckNeighboring(int x, int y, int value, int d) {
     if (x < 1 || kFieldWidth - 1 <= x || y < 0 || kFieldHeight - 1 <= y || field_check_[y][x] > 0) {
         return;
     }
-    if (field_float_[y][x] == 7) {
+    if (field_float_[y][x] == kMaxColorNum - 1) {
         // おじゃまぷよ
         field_check_[y][x] = 2;
         return;
@@ -274,13 +274,12 @@ void Game::Init() {
     memset(field_fixed_, 0, sizeof(field_fixed_));
     memset(field_float_, 0, sizeof(field_float_));
 
-    // TODO: マジックナンバー9をどうにかする
     for (int y = 0; y < kFieldHeight; y++) {
-        field_fixed_[y][0] = field_fixed_[y][kFieldWidth - 1] = 9;
-        field_float_[y][0] = field_float_[y][kFieldWidth - 1] = 9;
+        field_fixed_[y][0] = field_fixed_[y][kFieldWidth - 1] = kMaxColorNum;
+        field_float_[y][0] = field_float_[y][kFieldWidth - 1] = kMaxColorNum;
     }
     for (int x = 0; x < kFieldWidth; x++) {
-        field_fixed_[kFieldHeight - 1][x] = field_float_[kFieldHeight - 1][x] = 9;
+        field_fixed_[kFieldHeight - 1][x] = field_float_[kFieldHeight - 1][x] = kMaxColorNum;
     }
 
     CreatePuyo(next_puyos);
