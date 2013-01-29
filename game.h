@@ -19,7 +19,7 @@ private:
     static const int kDds[4];
     static const int kDeletePuyoNum = 4; /* 消去に必要な個数 */
     static const int kFallClockMillis = 100;
-    static const int kBlinkNum = 3;
+    static const int kBlinkNum = 4;
     static const int kBlinkClockMillis = 100;
     static const int kGameOverBlinkNum = 5;
     static const int kGameOverBlinkClockMillis = 400;
