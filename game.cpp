@@ -320,4 +320,14 @@ void Game::Start() {
             next_clock_millis_ = millis() + clock_cycle_millis_;
         }
     }
+
+    // ゲームオーバー
+    memcpy(field_float_, field_fixed_, sizeof(field_float_));
+    for (int i = 0; i < kGameOverBlinkNum; i++) {
+        p_led_->ClearAll();
+        p_led_->Update();
+        delay(kGameOverBlinkClockMillis);
+        Show();
+        delay(kGameOverBlinkClockMillis);
+    }
 }

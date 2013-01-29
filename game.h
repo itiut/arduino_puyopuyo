@@ -21,6 +21,8 @@ private:
     static const int kFallClockMillis = 100;
     static const int kBlinkNum = 3;
     static const int kBlinkClockMillis = 100;
+    static const int kGameOverBlinkNum = 5;
+    static const int kGameOverBlinkClockMillis = 400;
 
     int field_fixed_[kFieldHeight][kFieldWidth]; /* 固定 */
     int field_float_[kFieldHeight][kFieldWidth]; /* 固定+浮遊 (表示用) */
