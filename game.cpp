@@ -22,8 +22,6 @@ Game::~Game() {
 void Game::CreatePuyo(int *puyos) {
     puyos[0] = random(1, kColorNum - 1);
     puyos[1] = random(1, kColorNum - 1);
-    Serial.println(puyos[0], HEX);
-    Serial.println(puyos[1], HEX);
 }
 
 
@@ -82,7 +80,6 @@ void Game::MovePuyo(int dx, int dy) {
 }
 
 void Game::TurnPuyo(bool clockwise) {
-    Serial.println(clockwise);
     int temp_field[kPuyoHeight][kPuyoWidth];
     memcpy(temp_field, puyo_.field_, sizeof(temp_field));
 
@@ -111,6 +108,9 @@ void Game::TurnPuyo(bool clockwise) {
             // 回さなかったことにする
             memcpy(puyo_.field_, temp_field, sizeof(puyo_.field_));
         }
+    } else {
+        // 回転を反映させる
+        MovePuyo(0, 0);
     }
 }
 
@@ -169,8 +169,6 @@ void Game::Show() {
     }
 
     // TODO: マジックナンバーなんとかする
-    Serial.println(next_puyos[0], HEX);
-    Serial.println(next_puyos[1], HEX);
     p_led_->SetColor(72, kPuyoColors[next_puyos[0]]);
     p_led_->SetColor(73, kPuyoColors[next_puyos[1]]);
     p_led_->SetColor(74, kPuyoColors[next2_puyos[0]]);
